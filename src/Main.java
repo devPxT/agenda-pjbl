@@ -14,9 +14,9 @@ public class Main {
                 System.out.println("1. Cadastrar novo usuário");
                 System.out.println("2. Fazer login");
                 System.out.println("3. Sair");
-
+        
                 int opcao = obterOpcao(scanner);
-
+        
                 switch (opcao) {
                     case 1:
                         cadastrarUsuario(scanner);
@@ -37,10 +37,11 @@ public class Main {
                 System.out.println("1. Ver contatos");
                 System.out.println("2. Ver favoritos");
                 System.out.println("3. Favoritar contato");
-                System.out.println("4. Logout");
-
+                System.out.println("4. Remover contato");
+                System.out.println("5. Logout");
+        
                 int opcao = obterOpcao(scanner);
-
+        
                 switch (opcao) {
                     case 1:
                         visualizarContatos(scanner, usuarioLogado);
@@ -51,12 +52,24 @@ public class Main {
                     case 3:
                         System.out.print("Digite o nome do contato para favoritar: ");
                         String contatoFavorito = scanner.nextLine();
-                        boolean sucesso = usuarioService.favoritarContato(usuarioLogado, contatoFavorito);
-                        if (sucesso) {
+                        boolean sucessoFavorito = usuarioService.favoritarContato(usuarioLogado, contatoFavorito);
+                        if (sucessoFavorito) {
                             System.out.println("Contato adicionado aos favoritos com sucesso!");
+                        } else {
+                            System.out.println("Erro ao favoritar contato. Verifique se o contato existe.");
                         }
                         break;
                     case 4:
+                        System.out.print("Digite o nome do contato para remover: ");
+                        String contatoRemover = scanner.nextLine();
+                        if (usuarioLogado.getContatos().contains(contatoRemover)) {
+                            usuarioLogado.removerContato(contatoRemover);
+                            System.out.println("Contato removido com sucesso.");
+                        } else {
+                            System.out.println("Contato não encontrado.");
+                        }
+                        break;
+                    case 5:
                         usuarioLogado = null;
                         System.out.println("Logout realizado com sucesso.");
                         break;

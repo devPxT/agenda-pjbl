@@ -30,6 +30,12 @@ public class Usuario implements Serializable {
         }
     }
 
+    public void removerContato(String contato) {
+        if (contatos.contains(contato)) {
+            contatos.remove(contato);
+        }
+    }
+
     public void adicionarFavorito(String contato) {
         if (contatos.contains(contato) && !favoritos.contains(contato)) {
             favoritos.add(contato);

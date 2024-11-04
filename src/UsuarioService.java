@@ -69,7 +69,15 @@ public class UsuarioService {
                 usuario.getContatos().add(contato);
                 return true;
             }
-            return false; // Contato já existe
+            return false;
+        }
+
+        public boolean removerContato(Usuario usuario, String contato) {
+            if (usuario.getContatos().contains(contato)) {
+                usuario.getContatos().remove(contato);
+                return true;
+            }
+            return false;
         }
 
     public List<String> listarContatos(Usuario usuario) {
