@@ -12,7 +12,7 @@ public class UsuarioService {
     private int ultimoId = 0;
 
     public UsuarioService() {
-        carregarUsuarios(); // Carregar ao iniciar
+        carregarUsuarios();
     }
 
     public void salvarUsuarios() {
@@ -29,7 +29,7 @@ public class UsuarioService {
             usuarios = (List<Usuario>) ois.readObject();
             ultimoId = usuarios.stream().mapToInt(Usuario::getId).max().orElse(0);
         } catch (IOException | ClassNotFoundException e) {
-            usuarios = new ArrayList<>(); // Se falhar, inicia vazio
+            usuarios = new ArrayList<>();
         }
     }
 
@@ -64,4 +64,25 @@ public class UsuarioService {
         return null;
     }
     
+        public boolean adicionarContato(Usuario usuario, String contato) {
+            if (!usuario.getContatos().contains(contato)) {
+                usuario.getContatos().add(contato);
+                return true;
+            }
+            return false; // Contato já existe
+        }
+
+    public List<String> listarContatos(Usuario usuario) {
+        return usuario.getContatos();
+    }
+
+    public boolean favoritarContato(Usuario usuario, String contato) {
+        if (usuario.getContatos().contains(contato)) {
+            usuario.adicionarFavorito(contato);
+            return true;
+        } else {
+            System.out.println("Erro: Contato não encontrado.");
+            return false;
+        }
+    }
 }

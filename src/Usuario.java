@@ -23,4 +23,16 @@ public class Usuario implements Serializable {
     public String getSenha() { return senha; }
     public List<String> getContatos() { return contatos; }
     public List<String> getFavoritos() { return favoritos; }
+
+    public void adicionarContato(String contato) {
+        if (!contatos.contains(contato)) {
+            contatos.add(contato);
+        }
+    }
+
+    public void adicionarFavorito(String contato) {
+        if (contatos.contains(contato) && !favoritos.contains(contato)) {
+            favoritos.add(contato);
+        }
+    }
 }

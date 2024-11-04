@@ -15,7 +15,7 @@ public class Main {
                 System.out.println("2. Fazer login");
                 System.out.println("3. Sair");
 
-                int opcao = obterOpcao(scanner); //metodo para verificar se é um int
+                int opcao = obterOpcao(scanner);
 
                 switch (opcao) {
                     case 1:
@@ -25,7 +25,7 @@ public class Main {
                         usuarioLogado = loginUsuario(scanner);
                         break;
                     case 3:
-                        usuarioService.salvarUsuarios(); //salva dados antes de sair
+                        usuarioService.salvarUsuarios();
                         System.out.println("Saindo... Dados salvos com sucesso.");
                         scanner.close();
                         System.exit(0);
@@ -36,19 +36,28 @@ public class Main {
                 System.out.println("\n--- Agenda ---");
                 System.out.println("1. Ver contatos");
                 System.out.println("2. Ver favoritos");
-                System.out.println("3. Logout");
+                System.out.println("3. Favoritar contato");
+                System.out.println("4. Logout");
 
                 int opcao = obterOpcao(scanner);
 
                 switch (opcao) {
                     case 1:
-                        visualizarContatos(usuarioLogado);
+                        visualizarContatos(scanner, usuarioLogado);
                         break;
                     case 2:
-                        visualizarFavoritos(usuarioLogado);
+                        visualizarFavoritos(scanner, usuarioLogado);
                         break;
                     case 3:
-                        usuarioLogado = null; //desloga
+                        System.out.print("Digite o nome do contato para favoritar: ");
+                        String contatoFavorito = scanner.nextLine();
+                        boolean sucesso = usuarioService.favoritarContato(usuarioLogado, contatoFavorito);
+                        if (sucesso) {
+                            System.out.println("Contato adicionado aos favoritos com sucesso!");
+                        }
+                        break;
+                    case 4:
+                        usuarioLogado = null;
                         System.out.println("Logout realizado com sucesso.");
                         break;
                     default:
@@ -104,23 +113,35 @@ public class Main {
         }
     }
 
-    private static void visualizarContatos(Usuario usuario) {
+    private static void visualizarContatos(Scanner scanner, Usuario usuarioLogado) {
         System.out.println("\n--- Contatos ---");
-        if (usuario.getContatos().isEmpty() == true) {
+        if (usuarioLogado.getContatos().isEmpty()) {
             System.out.println("Nenhum contato cadastrado.");
         } else {
-            for (String contato : usuario.getContatos()) {
+            for (String contato : usuarioLogado.getContatos()) {
                 System.out.println("- " + contato);
+            }
+        }
+
+        System.out.print("\nDeseja adicionar um novo contato? (s/n): ");
+        if ("s".equalsIgnoreCase(scanner.nextLine())) {
+            System.out.print("Digite o nome do contato: ");
+            String contato = scanner.nextLine();
+            boolean sucesso = usuarioService.adicionarContato(usuarioLogado, contato);
+            if (sucesso) {
+                System.out.println("Contato adicionado com sucesso!");
+            } else {
+                System.out.println("O contato já existe.");
             }
         }
     }
 
-    private static void visualizarFavoritos(Usuario usuario) {
+    private static void visualizarFavoritos(Scanner scanner, Usuario usuarioLogado) {
         System.out.println("\n--- Favoritos ---");
-        if (usuario.getFavoritos().isEmpty() == true) {
+        if (usuarioLogado.getFavoritos().isEmpty()) {
             System.out.println("Nenhum favorito cadastrado.");
         } else {
-            for (String favorito : usuario.getFavoritos()) {
+            for (String favorito : usuarioLogado.getFavoritos()) {
                 System.out.println("- " + favorito);
             }
         }
