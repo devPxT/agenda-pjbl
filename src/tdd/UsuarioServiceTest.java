@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class UsuarioServiceTest {
 
     //TESTES USADOS PARA CADASTRO DE USUARIO
@@ -155,4 +157,79 @@ public class UsuarioServiceTest {
         assertFalse(usuario.getContatos().contains("contato1")); // verifica se o contato foi removido
         assertFalse(usuario.getFavoritos().contains("contato1")); // deve ser removido dos favoritos também
     }
+    // TESTES USADOS PARA REMOVER CONTATOS
+
+
+    // TESTES PARA ENVIO DE MENSAGENS
+    @Test
+    public void testeEnvioMensagemValida() {
+        UsuarioService usuarioService = new UsuarioService();
+        usuarioService.cadastrarUsuario("usuario1", "senha1");
+        usuarioService.cadastrarUsuario("contato1", "senha2");
+
+        Usuario usuario = usuarioService.buscarUsuario("usuario1");
+        Usuario contato = usuarioService.buscarUsuario("contato1");
+
+        boolean resultado = usuarioService.enviarMensagem(usuario, "contato1", "Olá, contato1!");
+        assertTrue(resultado); //confirma que a mensagem foi enviada com sucesso
+
+        //verifica se o histórico do usuário e do contato foram atualizados corretamente
+        assertEquals(1, usuario.getMensagens("contato1").size());
+        assertEquals(1, contato.getMensagens("usuario1").size());
+    }
+
+    @Test
+    public void testeEnvioMensagemParaContatoNaoExistente() {
+        UsuarioService usuarioService = new UsuarioService();
+        usuarioService.cadastrarUsuario("usuario1", "senha1");
+
+        Usuario usuario = usuarioService.buscarUsuario("usuario1");
+
+        boolean resultado = usuarioService.enviarMensagem(usuario, "contatoInexistente", "Olá!");
+        assertFalse(resultado); //deve retornar false pois o contato não existe
+    }
+    // TESTES PARA ENVIO DE MENSAGENS
+
+    // TESTES PARA VISUALIZAR HISTÓRICO DE MENSAGENS
+    @Test
+    public void testeVisualizarHistoricoComContato() {
+        UsuarioService usuarioService = new UsuarioService();
+        usuarioService.cadastrarUsuario("usuario1", "senha1");
+        usuarioService.cadastrarUsuario("contato1", "senha2");
+
+        Usuario usuario = usuarioService.buscarUsuario("usuario1");
+        usuarioService.enviarMensagem(usuario, "contato1", "Olá, contato1!");
+
+        //verifica o histórico de mensagens com "contato1"
+        List<Mensagem> historicoMensagens = usuario.getMensagens("contato1");
+        assertEquals(1, historicoMensagens.size());
+        assertEquals("Olá, contato1!", historicoMensagens.get(0).getConteudo());
+        assertEquals("usuario1", historicoMensagens.get(0).getRemetente());
+    }
+
+    @Test
+    public void testeVisualizarHistoricoSemMensagens() {
+        UsuarioService usuarioService = new UsuarioService();
+        usuarioService.cadastrarUsuario("usuario1", "senha1");
+        usuarioService.cadastrarUsuario("contato1", "senha2");
+
+        Usuario usuario = usuarioService.buscarUsuario("usuario1");
+
+        //verifica que o histórico de mensagens está vazio com "contato1"
+        List<Mensagem> historicoMensagens = usuario.getMensagens("contato1");
+        assertTrue(historicoMensagens.isEmpty());
+    }
+
+    @Test
+    public void testeVisualizarHistoricoSemContato() {
+        UsuarioService usuarioService = new UsuarioService();
+        usuarioService.cadastrarUsuario("usuario1", "senha1");
+
+        Usuario usuario = usuarioService.buscarUsuario("usuario1");
+
+        //tentativa de visualizar histórico com um contato inexistente (não adicionado na lista de contatos)
+        List<Mensagem> historicoMensagens = usuario.getMensagens("contatoInexistente");
+        assertTrue(historicoMensagens == null || historicoMensagens.isEmpty(), "O histórico deve ser vazio ou inexistente para contatos não adicionados.");
+    }
+    // TESTES PARA VISUALIZAR HISTÓRICO DE MENSAGENS
 }

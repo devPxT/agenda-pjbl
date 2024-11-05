@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -38,7 +39,9 @@ public class Main {
                 System.out.println("2. Ver favoritos");
                 System.out.println("3. Favoritar contato");
                 System.out.println("4. Remover contato");
-                System.out.println("5. Logout");
+                System.out.println("5. Enviar mensagem");
+                System.out.println("6. Ver histórico de mensagens");
+                System.out.println("7. Logout");
         
                 int opcao = obterOpcao(scanner);
         
@@ -70,6 +73,12 @@ public class Main {
                         }
                         break;
                     case 5:
+                        enviarMensagem(scanner, usuarioLogado);
+                        break;
+                    case 6:
+                        visualizarHistoricoMensagens(scanner, usuarioLogado);
+                        break;
+                    case 7:
                         usuarioLogado = null;
                         System.out.println("Logout realizado com sucesso.");
                         break;
@@ -156,6 +165,41 @@ public class Main {
         } else {
             for (String favorito : usuarioLogado.getFavoritos()) {
                 System.out.println("- " + favorito);
+            }
+        }
+    }
+
+    private static void enviarMensagem(Scanner scanner, Usuario usuarioLogado) {
+        System.out.print("Digite o nome do contato para enviar mensagem: ");
+        String contatoNome = scanner.nextLine();
+        
+        if (usuarioLogado.getContatos().contains(contatoNome)) {
+            System.out.print("Digite a mensagem: ");
+            String mensagem = scanner.nextLine();
+
+            if (usuarioService.enviarMensagem(usuarioLogado, contatoNome, mensagem) == true) {
+                System.out.println("Mensagem enviada com sucesso!");
+                return;
+            }
+            System.out.println("Erro: Contato não encontrado. Por favor adicione apenas contatos existentes no sistema!");
+
+        } else {
+            System.out.println("Erro: Contato não encontrado.");
+        }
+    }
+
+    private static void visualizarHistoricoMensagens(Scanner scanner, Usuario usuarioLogado) {
+        System.out.print("Digite o nome do contato para ver o histórico de mensagens: ");
+        String contatoNome = scanner.nextLine();
+
+        List<Mensagem> historicoMensagens = usuarioService.obterHistoricoMensagens(usuarioLogado, contatoNome);
+
+        if (historicoMensagens.isEmpty()) {
+            System.out.println("Nenhuma mensagem encontrada com o contato " + contatoNome + ".");
+        } else {
+            System.out.println("\n--- Histórico de Mensagens com " + contatoNome + " ---");
+            for (Mensagem mensagem : historicoMensagens) {
+                System.out.println(mensagem.getRemetente() + ": " + mensagem.getConteudo());
             }
         }
     }

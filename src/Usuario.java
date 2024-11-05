@@ -1,6 +1,8 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -9,6 +11,8 @@ public class Usuario implements Serializable {
     private String senha;
     private List<String> contatos;
     private List<String> favoritos;
+    // private Map<String, List<String>> historicoMensagens;
+    private Map<String, List<Mensagem>> historicoMensagens;
 
     public Usuario(int id, String login, String senha) {
         this.id = id;
@@ -16,6 +20,7 @@ public class Usuario implements Serializable {
         this.senha = senha;
         this.contatos = new ArrayList<>();
         this.favoritos = new ArrayList<>();
+        this.historicoMensagens = new HashMap<>();
     }
 
     public int getId() { return id; }
@@ -23,6 +28,8 @@ public class Usuario implements Serializable {
     public String getSenha() { return senha; }
     public List<String> getContatos() { return contatos; }
     public List<String> getFavoritos() { return favoritos; }
+
+    public List<Mensagem> getMensagens(String contato) { return historicoMensagens.getOrDefault(contato, new ArrayList<>()); }
 
     public void adicionarContato(String contato) {
         if (!contatos.contains(contato)) {
@@ -41,4 +48,10 @@ public class Usuario implements Serializable {
             favoritos.add(contato);
         }
     }
+
+    public void adicionarMensagem(String contato, String conteudo, String remetente) {
+        historicoMensagens.putIfAbsent(contato, new ArrayList<>());
+        historicoMensagens.get(contato).add(new Mensagem(conteudo, remetente));
+    }
+    
 }

@@ -93,4 +93,23 @@ public class UsuarioService {
             return false;
         }
     }
+
+    public List<Mensagem> obterHistoricoMensagens(Usuario usuario, String contatoNome) {
+        if (usuario.getContatos().contains(contatoNome)) {
+            return usuario.getMensagens(contatoNome);
+        } else {
+            System.out.println("Erro: Contato não encontrado.");
+            return new ArrayList<>();
+        }
+    }
+
+    public boolean enviarMensagem(Usuario usuario, String contatoNome, String mensagem) {
+        Usuario contato = buscarUsuario(contatoNome);
+        if (contato != null) {
+            usuario.adicionarMensagem(contatoNome, mensagem, usuario.getLogin());
+            contato.adicionarMensagem(usuario.getLogin(), mensagem, usuario.getLogin()); //os dois contatos ter a mesma mensagem
+            return true;
+        }
+        return false;
+    }
 }
